@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <title>Aggregate validation rules</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/x-icon" href="src/favicon.ico">
+        <script src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../../dhis-web-commons/css/menu.css">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    </head>
+    <body>
+        <div style="margin-top:10px;margin-left: 10px; margin-right: 10px; height: 100%">
+            <div class="text-center">
+                <h1>Aggregate validation rules</h1>
+                <div class="input-group">
+                    <input type="date" class="form-control"/>
+                    <span class="input-group-btn" style="width:0px;"></span>
+                    <input type="date" class="form-control"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-success" type="button" onclick="run();">
+                            <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Run validation
+                        </button>
+                    </span>
+                </div>
+                <div id="analysisResult"></div>
+                <div id="info">
+                </div>
+                <br>
+                <button type="button" class="btn btn-danger" aria-label="Left Align" onclick="back();">
+                    Back
+                </button>
+            </div>
+        </div>
+    </body>
+    <script> 
+        function run() {
+            $.get(
+                "https://play.dhis2.org/dev/dhis-web-validationrule/runValidationAction.action?organisationUnitId=vWbkYPRmKyS&startDate=2017-10-10&endDate=2017-12-28&validationRuleGroupId=-1&sendNotifications=false&persistResults=false",
+                function(data) {
+                    $( 'div#analysisResult' ).html( data );
+                }
+            );
+        }
+
+        function viewValidationResultDetails(validationRuleId, sourceId, periodId) {
+            $.post(
+                "https://play.dhis2.org/dev/dhis-web-validationrule/viewValidationResultDetails.action",
+                {validationRuleId: validationRuleId, sourceId: sourceId, periodId: periodId},
+                function(data) {
+                    $('div#info').show();
+                    $('div#analysisResult').hide();
+                    $('div#info').html(data);
+                }
+            );
+        }
+
+        function back() {
+            $('div#analysisResult').show();
+            $('div#info').empty();
+            $('div#info').hide();
+        }
+    </script>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th {
+            text-align: center;
+        }
+
+        #analysisResult > table {
+            display: none;
+        }
+        tr:nth-child(even) {background: rgb(235, 235, 235)}
+
+        /*Change to display details link*/
+        img {
+            display: none;
+        }
+    </style>
+</html>

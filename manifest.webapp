@@ -1,0 +1,23 @@
+{
+  "name": "Val-I: Validation Rules Widget",
+  "description": "Widget for aggregate validation rules.",
+  "version": "0.0.1",
+  "appType": "DASHBOARD_WIDGET",
+  "launch_path": "index.html",
+  "default_locale": "en",
+  "activities": {
+    "dhis": {
+      "href": "*"
+    }
+  },
+  "developer": {
+    "name": "Lukas Wijgaart van Dijk",
+    "email": "lukas@abaris.no",
+    "url": "https://www.abaris.no",
+    "company": "Abaris"
+  },
+  "icons": {
+    "48": "icon.png"
+  },
+  "manifest_generated_at": "Wed Dec 27 2017 14:45:20 GMT+0100 (CET)"
+}
