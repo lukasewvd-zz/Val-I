@@ -12,78 +12,144 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     </head>
     <body>
-        <div style="margin-top:10px;margin-left: 10px; margin-right: 10px; height: 100%">
-            <div class="text-center">
-                <h1>Aggregate validation rules</h1>
-                <div class="input-group">
-                    <input type="date" class="form-control"/>
-                    <span class="input-group-btn" style="width:0px;"></span>
-                    <input type="date" class="form-control"/>
-                    <span class="input-group-btn">
-                        <button class="btn btn-success" type="button" onclick="run();">
-                            <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Run validation
-                        </button>
-                    </span>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div style="margin-top:10px;margin-left: 10px; margin-right: 10px; height: 100%">
+                        <div class="text-center">
+                            <h1>Aggregate validation rules</h1>
+                            <hr>
+                        </div>
+                    </div>
                 </div>
-                <div id="analysisResult"></div>
-                <div id="info">
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Date</h3>
+                        </div>
+                        <div class="panel-body" style="height: 225px; max-height: 250px;">
+                            <label for="sDate">Start date:</label>
+                            <input id="sDate" type="date" class="form-control"/>
+                            <br>
+                            <label for="eDate">End date:</label>
+                            <input id="eDate" type="date" class="form-control"/>
+                            <br>
+                            <div class="text-center">
+                                <button class="btn btn-success" type="button" onclick="runValidation();">
+                                    <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Run validation
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <br>
-                <button type="button" class="btn btn-danger" aria-label="Left Align" onclick="back();">
-                    Back
-                </button>
+                <div class="col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Organisation Unit</h3>
+                        </div>
+                        <div class="panel-body" style="height: 225px; max-height: 250px; overflow-y: scroll;">
+                            <img src="http://via.placeholder.com/300.jpg" class="img-responsive" alt="Placeholder" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Validation Rules</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div id="analysisResult"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
+
     <script> 
-        function run() {
+        var results = [];
+
+        function runValidation() {
             $.get(
-                "https://play.dhis2.org/dev/dhis-web-validationrule/runValidationAction.action?organisationUnitId=vWbkYPRmKyS&startDate=2017-10-10&endDate=2017-12-28&validationRuleGroupId=-1&sendNotifications=false&persistResults=false",
+                "https://play.dhis2.org/release1/api/validationResults/?paging=false",
                 function(data) {
-                    $( 'div#analysisResult' ).html( data );
+                    results = data.validationResults;
+                    console.log(results);
+                    generateTable(data.validationResults);
                 }
             );
         }
 
-        function viewValidationResultDetails(validationRuleId, sourceId, periodId) {
-            $.post(
-                "https://play.dhis2.org/dev/dhis-web-validationrule/viewValidationResultDetails.action",
-                {validationRuleId: validationRuleId, sourceId: sourceId, periodId: periodId},
-                function(data) {
-                    $('div#info').show();
-                    $('div#analysisResult').hide();
-                    $('div#info').html(data);
-                }
-            );
-        }
+        function generateTable(rules) {
+            var parent = document.getElementById('analysisResult');
+            var ruleTable = document.createElement('table');
+            ruleTable.setAttribute('class', 'table table-striped header-fixed');
 
-        function back() {
-            $('div#analysisResult').show();
-            $('div#info').empty();
-            $('div#info').hide();
+            var table = "<thead>";
+            table += "<tr>";
+            table += "<th>ID</th>";
+            table += "<th>Left side</th>";
+            table += "<th>Rigth side</th>";
+            table += "</tr>";
+            table += "</thead>";
+            table += "<tbody>";
+            for(var i = 0; i < rules.length; i++) {
+                var path = "https://play.dhis2.org/release1/api/validationResults/" + rules[i].id;
+                var rule = {};
+                $.get(path, function(data) {
+                        rule = data;
+                    }
+                );
+
+                table += "<tr>";
+                table += "<td>" + rules[i].id + "</td>";
+                table += "<td>" + rules[i].leftsideValue + "</td>";
+                table += "<td>" + rules[i].rightsideValue + "</td>";
+                table += "</tr>";
+            }
+            table += "</tbody>";
+
+            ruleTable.innerHTML = table;
+            console.log(ruleTable);
+            parent.appendChild(ruleTable);
         }
     </script>
     <style>
-        table {
-            border-collapse: collapse;
+        .header-fixed {
+            width: 100% 
         }
 
-        table, th, td {
-            border: 1px solid black;
+        .header-fixed > thead,
+        .header-fixed > tbody,
+        .header-fixed > thead > tr,
+        .header-fixed > tbody > tr,
+        .header-fixed > thead > tr > th,
+        .header-fixed > tbody > tr > td {
+            display: block;
         }
 
-        th {
-            text-align: center;
+        .header-fixed > tbody > tr:after,
+        .header-fixed > thead > tr:after {
+            content: ' ';
+            display: block;
+            visibility: hidden;
+            clear: both;
         }
 
-        #analysisResult > table {
-            display: none;
+        .header-fixed > tbody {
+            overflow-y: auto;
+            height: 250px;
         }
-        tr:nth-child(even) {background: rgb(235, 235, 235)}
 
-        /*Change to display details link*/
-        img {
-            display: none;
+        .header-fixed > tbody > tr > td,
+        .header-fixed > thead > tr > th {
+            /*100% / num of columns*/
+            width: 33.333333%;
+            float: left;
         }
     </style>
 </html>
