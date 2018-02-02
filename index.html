@@ -17,65 +17,33 @@
                 <div class="col-sm-12">
                     <div style="margin-top:10px;margin-left: 10px; margin-right: 10px; height: 100%">
                         <div class="text-center">
-                            <h1>Aggregate validation rules</h1>
+                            <h3>Actions: [PROGRAM NAME]</h3>
+                            <p>These actions are recommended based on your data</p>
                             <hr>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-6">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Date</h3>
-                        </div>
-                        <div class="panel-body" style="height: 225px; max-height: 250px;">
-                            <label for="sDate">Start date:</label>
-                            <input id="sDate" type="date" class="form-control"/>
-                            <br>
-                            <label for="eDate">End date:</label>
-                            <input id="eDate" type="date" class="form-control"/>
-                            <br>
-                            <div class="text-center">
-                                <button class="btn btn-success" type="button" onclick="runValidation();">
-                                    <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Run validation
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Organisation Unit</h3>
-                        </div>
-                        <div class="panel-body" style="height: 225px; max-height: 250px; overflow-y: scroll;">
-                            <img src="http://via.placeholder.com/300.jpg" class="img-responsive" alt="Placeholder" style="width: 100%;">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
                 <div class="col-sm-12">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Validation Rules</h3>
-                        </div>
-                        <div class="panel-body">
-                            <div id="analysisResult"></div>
-                        </div>
-                    </div>
+                    <div id="analysisResult"></div>
+                    <br>
+                    <div class="text-center">
+                        <button class="btn btn-success" type="button" onclick="runValidation();">
+                            <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Run validation
+                        </button>
+                    </div>                   
                 </div>
             </div>
         </div>
     </body>
 
-    <script> 
+    <script>
         var results = [];
 
         function runValidation() {
             $.get(
-                "https://play.dhis2.org/release1/api/validationResults/?paging=false",
+                "https://play.dhis2.org/2.27/api/validationResults?fields=*,validationRule[description,importance]&paging=false",
                 function(data) {
                     results = data.validationResults;
                     console.log(results);
@@ -86,32 +54,49 @@
 
         function generateTable(rules) {
             var parent = document.getElementById('analysisResult');
-            var ruleTable = document.createElement('table');
-            ruleTable.setAttribute('class', 'table table-striped header-fixed');
-
-            var table = "<thead>";
-            table += "<tr>";
-            table += "<th>ID</th>";
-            table += "<th>Left side</th>";
-            table += "<th>Rigth side</th>";
-            table += "</tr>";
-            table += "</thead>";
-            table += "<tbody>";
+            var ruleTable = document.createElement('div');
+            
+            var table = "";
             for(var i = 0; i < rules.length; i++) {
-                var path = "https://play.dhis2.org/release1/api/validationResults/" + rules[i].id;
+                var path = "https://play.dhis2.org/2.27/api/validationResults/" + rules[i].id;
                 var rule = {};
                 $.get(path, function(data) {
                         rule = data;
                     }
                 );
 
-                table += "<tr>";
-                table += "<td>" + rules[i].id + "</td>";
-                table += "<td>" + rules[i].leftsideValue + "</td>";
-                table += "<td>" + rules[i].rightsideValue + "</td>";
-                table += "</tr>";
+                if(rules[i].validationRule.importance === 'HIGH') {
+                    table += "<div class='panel panel-default high'>";
+                    table += "<div class='panel-body'>";
+                    table += "<b style='padding-bottom: 2px'>" + rules[i].validationRule.description + "</b>";
+                    table += "<p>This is a place holder description that will tell the user what action to take.</p>"
+                    //table += "<td>" + rules[i].created + "</td>";
+                    //table += "<td>" + rules[i].validationRule.importance + "</td>";
+                    //table += "<td>" + rules[i].rightsideValue + "</td>";
+                    table += "</div>";
+                    table += "</div>";
+                } else if(rules[i].validationRule.importance === 'MEDIUM') {
+                    table += "<div class='panel panel-default medium'>";
+                    table += "<div class='panel-body'>";
+                    table += "<b style='padding-bottom: 2px'>" + rules[i].validationRule.description + "</b>";
+                    table += "<p>This is a place holder description that will tell the user what action to take.</p>"
+                    //table += "<td>" + rules[i].created + "</td>";
+                    //table += "<td>" + rules[i].validationRule.importance + "</td>";
+                    //table += "<td>" + rules[i].rightsideValue + "</td>";
+                    table += "</div>";
+                    table += "</div>";
+                } else if(rules[i].validationRule.importance === 'LOW') {
+                    table += "<div class='panel panel-default low'>";
+                    table += "<div class='panel-body'>";
+                    table += "<b style='padding-bottom: 2px'>" + rules[i].validationRule.description + "</b>";
+                    table += "<p>This is a place holder description that will tell the user what action to take.</p>"
+                    //table += "<td>" + rules[i].created + "</td>";
+                    //table += "<td>" + rules[i].validationRule.importance + "</td>";
+                    //table += "<td>" + rules[i].rightsideValue + "</td>";
+                    table += "</div>";
+                    table += "</div>";
+                }
             }
-            table += "</tbody>";
 
             ruleTable.innerHTML = table;
             console.log(ruleTable);
@@ -119,37 +104,19 @@
         }
     </script>
     <style>
-        .header-fixed {
-            width: 100% 
+        .high {
+            background-color: rgb(239, 223, 223);
+            margin-bottom: 5px;
         }
 
-        .header-fixed > thead,
-        .header-fixed > tbody,
-        .header-fixed > thead > tr,
-        .header-fixed > tbody > tr,
-        .header-fixed > thead > tr > th,
-        .header-fixed > tbody > tr > td {
-            display: block;
+        .medium {
+            background-color: rgb(251, 248, 229);
+            margin-bottom: 5px;
         }
 
-        .header-fixed > tbody > tr:after,
-        .header-fixed > thead > tr:after {
-            content: ' ';
-            display: block;
-            visibility: hidden;
-            clear: both;
-        }
-
-        .header-fixed > tbody {
-            overflow-y: auto;
-            height: 250px;
-        }
-
-        .header-fixed > tbody > tr > td,
-        .header-fixed > thead > tr > th {
-            /*100% / num of columns*/
-            width: 33.333333%;
-            float: left;
+        .low {
+            background-color: rgb(226, 239, 218);
+            margin-bottom: 5px;
         }
     </style>
 </html>
