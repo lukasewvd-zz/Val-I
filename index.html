@@ -42,11 +42,15 @@
         var results = [];
 
         function runValidation() {
+            //TODO: Make URL dynamic, use a base URL that is fetched.
             $.get(
                 "https://play.dhis2.org/2.27/api/validationResults?fields=*,validationRule[description,importance]&paging=false",
                 function(data) {
                     results = data.validationResults;
-                    console.log(results);
+
+                    //TODO: Remove after testing
+                    results[3].validationRule.importance = "LOW";
+                    results[5].validationRule.importance = "HIGH";
                     generateTable(data.validationResults);
                 }
             );
@@ -70,6 +74,7 @@
                     table += "<div class='panel-body'>";
                     table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + rules[i].validationRule.description + "</b>";
                     table += "<p>This is a place holder description that will tell the user what action to take.</p>"
+                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>"
                     //table += "<td>" + rules[i].created + "</td>";
                     //table += "<td>" + rules[i].validationRule.importance + "</td>";
                     //table += "<td>" + rules[i].rightsideValue + "</td>";
@@ -80,6 +85,7 @@
                     table += "<div class='panel-body'>";
                     table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + rules[i].validationRule.description + "</b>";
                     table += "<p>This is a place holder description that will tell the user what action to take.</p>"
+                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>"
                     //table += "<td>" + rules[i].created + "</td>";
                     //table += "<td>" + rules[i].validationRule.importance + "</td>";
                     //table += "<td>" + rules[i].rightsideValue + "</td>";
@@ -88,8 +94,9 @@
                 } else if(rules[i].validationRule.importance === 'LOW') {
                     table += "<div class='panel panel-default low'>";
                     table += "<div class='panel-body'>";
-                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(174, 228, 140)'> </span><b style='padding-bottom: 2px'> " + rules[i].validationRule.description + "</b>";
+                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + rules[i].validationRule.description + "</b>";
                     table += "<p>This is a place holder description that will tell the user what action to take.</p>"
+                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>"
                     //table += "<td>" + rules[i].created + "</td>";
                     //table += "<td>" + rules[i].validationRule.importance + "</td>";
                     //table += "<td>" + rules[i].rightsideValue + "</td>";
@@ -99,8 +106,20 @@
             }
 
             ruleTable.innerHTML = table;
-            console.log(ruleTable);
             parent.appendChild(ruleTable);
+        }
+
+        function feedback(type, id) {
+            if(type === 1) {
+                //TODO: Add logic for when thumbs up is given.
+                //Has to be done through some sort of API call that stores the data.
+                //Also the id of the Action needs to be stored in order to get "good data".
+                //Add toggle, if pressed twice, remove feedback.
+                console.log("POSITIVE");
+            } else if(type === 0) {
+                //TODO: Add logic for when thumbs down is given.
+                console.log("NEGATIVE");
+            }
         }
     </script>
     <style>
@@ -115,7 +134,7 @@
         }
 
         .low {
-            background-color: rgb(226, 239, 218);
+            background-color: rgb(246, 246, 246);
             margin-bottom: 5px;
         }
     </style>
