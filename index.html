@@ -68,7 +68,7 @@
                 if(rules[i].validationRule.importance === 'HIGH') {
                     table += "<div class='panel panel-default high'>";
                     table += "<div class='panel-body'>";
-                    table += "<b style='padding-bottom: 2px'>" + rules[i].validationRule.description + "</b>";
+                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + rules[i].validationRule.description + "</b>";
                     table += "<p>This is a place holder description that will tell the user what action to take.</p>"
                     //table += "<td>" + rules[i].created + "</td>";
                     //table += "<td>" + rules[i].validationRule.importance + "</td>";
@@ -78,7 +78,7 @@
                 } else if(rules[i].validationRule.importance === 'MEDIUM') {
                     table += "<div class='panel panel-default medium'>";
                     table += "<div class='panel-body'>";
-                    table += "<b style='padding-bottom: 2px'>" + rules[i].validationRule.description + "</b>";
+                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + rules[i].validationRule.description + "</b>";
                     table += "<p>This is a place holder description that will tell the user what action to take.</p>"
                     //table += "<td>" + rules[i].created + "</td>";
                     //table += "<td>" + rules[i].validationRule.importance + "</td>";
@@ -88,7 +88,7 @@
                 } else if(rules[i].validationRule.importance === 'LOW') {
                     table += "<div class='panel panel-default low'>";
                     table += "<div class='panel-body'>";
-                    table += "<b style='padding-bottom: 2px'>" + rules[i].validationRule.description + "</b>";
+                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(174, 228, 140)'> </span><b style='padding-bottom: 2px'> " + rules[i].validationRule.description + "</b>";
                     table += "<p>This is a place holder description that will tell the user what action to take.</p>"
                     //table += "<td>" + rules[i].created + "</td>";
                     //table += "<td>" + rules[i].validationRule.importance + "</td>";
