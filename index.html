@@ -4,12 +4,12 @@
         <title>Aggregate validation rules</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/x-icon" href="src/favicon.ico">
-        <script src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"></script>
+        <script src="../../../dhis-web-core-resource/jquery/3.2.0/dist/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="../../../dhis-web-commons/css/menu.css">
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/x-icon" href="favicon.ico">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="../../../dhis-web-core-resource/bootstrap/3.0.2/css/bootstrap.min.css">
     </head>
     <body>
         <div class="container">
@@ -17,7 +17,7 @@
                 <div class="col-sm-12">
                     <div style="margin-top:10px;margin-left: 10px; margin-right: 10px; height: 100%">
                         <div class="text-center">
-                            <h3>Actions: [PROGRAM NAME]</h3>
+                            <h3>Actions: <select id="groups" onchange="setSelectedGroup(this.value)"></select></h3>
                             <p>These actions are recommended based on your data</p>
                             <hr>
                         </div>
@@ -26,91 +26,102 @@
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    <div id="analysisResult"></div>
-                    <br>
-                    <div class="text-center">
-                        <button class="btn btn-success" type="button" onclick="runValidation();">
-                            <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Run validation
-                        </button>
-                    </div>                   
+                    <div id="analysisResult"></div>              
                 </div>
             </div>
         </div>
     </body>
 
     <script>
+        var selectedGroup = "";
         var results = [];
+        getGroups();
+
+        function setSelectedGroup(id) {
+            selectedGroup = id;
+            generateTable(results);
+        }
+
+        function getGroups() {
+            var groups = [];
+            $.get(
+                "../../../api/validationRuleGroups?paging=false", function(data) {
+                    groups = data.validationRuleGroups;
+                    let optionList = document.getElementById('groups').options;
+                    groups.forEach(group =>
+                    optionList.add(new Option(group.displayName, group.id)));
+                    selectedGroup = groups[0].id;
+                    runValidation();
+                }
+            );
+        }
 
         function runValidation() {
-            //TODO: Make URL dynamic, use a base URL that is fetched.
             $.get(
-                "https://play.dhis2.org/2.27/api/validationResults?fields=id,validationRule[description,importance,instruction,validationRuleGroups]&paging=false",
+                "../../../api/validationResults?fields=id,validationRule[displayName,name,description,instruction,importance,validationRuleGroups[id]]&paging=false",
                 function(data) {
                     results = data.validationResults;
-
-                    //TODO: Remove after testing
-                    results[3].validationRule.importance = "LOW";
-                    results[5].validationRule.importance = "HIGH";
-                    generateTable(data.validationResults);
+                    generateTable(results);
                 }
             );
         }
 
         function generateTable(rules) {
             var parent = document.getElementById('analysisResult');
+            
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
+
             var ruleTable = document.createElement('div');
             
             var table = "";
 
             var name = "";
             var instruction = "";
+            var validationRuleGroupIds = [];
 
             for(var i = 0; i < rules.length; i++) {
-                /*var path = "https://play.dhis2.org/2.27/api/validationResults/" + rules[i].id;
-                var rule = {};
-                $.get(path, function(data) {
-                        rule = data;
+                validationRuleGroupIds = rules[i].validationRule.validationRuleGroups.map(function(obj){return obj.id;});
+
+                if(validationRuleGroupIds.indexOf(selectedGroup) > -1) {
+                    if(!rules[i].validationRule.displayName) {
+                        name = rules[i].validationRule.name;
+                    } else {
+                        name = rules[i].validationRule.displayName;
                     }
-                );*/
 
-                console.log(rules[i].validationRule.validationRuleGroups);
+                    if(!rules[i].validationRule.instruction) {
+                        instruction = rules[i].validationRule.description;
+                    } else {
+                        instruction = rules[i].validationRule.instruction;
+                    }
 
-                if(!rules[i].validationRule.displayName) {
-                    name = rules[i].validationRule.name;
-                } else {
-                    name = rules[i].validationRule.displayName;
-                }
-
-                if(!rules[i].validationRule.instruction) {
-                    instruction = rules[i].validationRule.description;
-                } else {
-                    instruction = rules[i].validationRule.instruction;
-                }
-
-                if(rules[i].validationRule.importance === 'HIGH') {
-                    table += "<div class='panel panel-default high'>";
-                    table += "<div class='panel-body'>";
-                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
-                    table += "<p>" + instruction + "</p>";
-                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
-                    table += "</div>";
-                    table += "</div>";
-                } else if(rules[i].validationRule.importance === 'MEDIUM') {
-                    table += "<div class='panel panel-default medium'>";
-                    table += "<div class='panel-body'>";
-                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
-                    table += "<p>" + instruction + "</p>";
-                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
-                    table += "</div>";
-                    table += "</div>";
-                } else if(rules[i].validationRule.importance === 'LOW') {
-                    table += "<div class='panel panel-default low'>";
-                    table += "<div class='panel-body'>";
-                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
-                    table += "<p>" + instruction + "</p>";
-                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
-                    table += "</div>";
-                    table += "</div>";
+                    if(rules[i].validationRule.importance === 'HIGH') {
+                        table += "<div class='panel panel-default high'>";
+                        table += "<div class='panel-body'>";
+                        table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
+                        table += "<p>" + instruction + "</p>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'>   </span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
+                        table += "</div>";
+                        table += "</div>";
+                    } else if(rules[i].validationRule.importance === 'MEDIUM') {
+                        table += "<div class='panel panel-default medium'>";
+                        table += "<div class='panel-body'>";
+                        table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
+                        table += "<p>" + instruction + "</p>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'>   </span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
+                        table += "</div>";
+                        table += "</div>";
+                    } else if(rules[i].validationRule.importance === 'LOW') {
+                        table += "<div class='panel panel-default low'>";
+                        table += "<div class='panel-body'>";
+                        table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
+                        table += "<p>" + instruction + "</p>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span>   <span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
+                        table += "</div>";
+                        table += "</div>";
+                    }
                 }
             }
 
