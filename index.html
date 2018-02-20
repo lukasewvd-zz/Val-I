@@ -17,7 +17,7 @@
                 <div class="col-sm-12">
                     <div style="margin-top:10px;margin-left: 10px; margin-right: 10px; height: 100%">
                         <div class="text-center">
-                            <h3>Actions: <select id="groups" onchange="setSelectedGroup(this.value)"></select></h3>
+                            <h3>Actions: <select id="groups" onchange="setSelectedGroup(this.value)" style="max-width: 250px;"></select></h3>
                             <p>These actions are recommended based on your data</p>
                             <hr>
                         </div>
@@ -58,7 +58,7 @@
 
         function runValidation() {
             $.get(
-                "../../../api/validationResults?fields=id,validationRule[displayName,name,description,instruction,importance,validationRuleGroups[id]]&paging=false",
+                "../../../api/validationResults?fields=validationRule[id,displayName,name,description,instruction,importance,validationRuleGroups[id]]&paging=false",
                 function(data) {
                     results = data.validationResults;
                     generateTable(results);
@@ -79,6 +79,7 @@
 
             var name = "";
             var instruction = "";
+            var id = "";
             var validationRuleGroupIds = [];
 
             for(var i = 0; i < rules.length; i++) {
@@ -97,12 +98,14 @@
                         instruction = rules[i].validationRule.instruction;
                     }
 
+                    id = rules[i].validationRule.id;
+
                     if(rules[i].validationRule.importance === 'HIGH') {
                         table += "<div class='panel panel-default high'>";
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'>   </span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'MEDIUM') {
@@ -110,7 +113,7 @@
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'>   </span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'LOW') {
@@ -118,7 +121,7 @@
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span>   <span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
                         table += "</div>";
                     }
@@ -130,16 +133,64 @@
         }
 
         function feedback(type, id) {
-            if(type === 1) {
-                //TODO: Add logic for when thumbs up is given.
-                //Has to be done through some sort of API call that stores the data.
-                //Also the id of the Action needs to be stored in order to get "good data".
-                //Add toggle, if pressed twice, remove feedback.
-                console.log("POSITIVE");
-            } else if(type === 0) {
-                //TODO: Add logic for when thumbs down is given.
-                console.log("NEGATIVE");
-            }
+            $.get(
+                "../../../api/dataStore/actionFeedback/" + id,
+                function(data) {
+                   var score = data.score;
+                   if(!score) {
+                       score = 0;
+                   }
+
+                    if(type === 1) {
+                        score++;
+                        $.ajax({
+                            url: "../../../api/dataStore/actionFeedback/" + id,
+                            type: "PUT",
+                            data: "{\"score\":" + score + "}",
+                            contentType:"application/json; charset=utf-8",
+                            dataType:"json",
+                            success: function(){
+                            }
+                        });
+                    } else if(type === 0) {
+                        score--;
+                        $.ajax({
+                            url: "../../../api/dataStore/actionFeedback/" + id,
+                            type: "PUT",
+                            data: "{\"score\":" + score + "}",
+                            contentType:"application/json; charset=utf-8",
+                            dataType:"json",
+                            success: function(){
+                            }
+                        });
+                    }
+                })
+                .fail(function() {
+                    var score = 0;
+                    if(type === 1) {
+                        score++;
+                        $.ajax({
+                            url: "../../../api/dataStore/actionFeedback/" + id,
+                            type: "POST",
+                            data: "{\"score\":" + score + "}",
+                            contentType:"application/json; charset=utf-8",
+                            dataType:"json",
+                            success: function(){
+                            }
+                        });
+                    } else if(type === 0) {
+                        score--;
+                        $.ajax({
+                            url: "../../../api/dataStore/actionFeedback/" + id,
+                            type: "POST",
+                            data: "{\"score\":" + score + "}",
+                            contentType:"application/json; charset=utf-8",
+                            dataType:"json",
+                            success: function(){
+                            }
+                        });
+                    }
+                });
         }
     </script>
     <style>
