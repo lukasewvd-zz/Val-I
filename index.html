@@ -44,7 +44,7 @@
         function runValidation() {
             //TODO: Make URL dynamic, use a base URL that is fetched.
             $.get(
-                "https://play.dhis2.org/2.27/api/validationResults?fields=*,validationRule[description,importance]&paging=false",
+                "https://play.dhis2.org/2.27/api/validationResults?fields=id,validationRule[description,importance,instruction,validationRuleGroups]&paging=false",
                 function(data) {
                     results = data.validationResults;
 
@@ -61,45 +61,54 @@
             var ruleTable = document.createElement('div');
             
             var table = "";
+
+            var name = "";
+            var instruction = "";
+
             for(var i = 0; i < rules.length; i++) {
-                var path = "https://play.dhis2.org/2.27/api/validationResults/" + rules[i].id;
+                /*var path = "https://play.dhis2.org/2.27/api/validationResults/" + rules[i].id;
                 var rule = {};
                 $.get(path, function(data) {
                         rule = data;
                     }
-                );
+                );*/
+
+                console.log(rules[i].validationRule.validationRuleGroups);
+
+                if(!rules[i].validationRule.displayName) {
+                    name = rules[i].validationRule.name;
+                } else {
+                    name = rules[i].validationRule.displayName;
+                }
+
+                if(!rules[i].validationRule.instruction) {
+                    instruction = rules[i].validationRule.description;
+                } else {
+                    instruction = rules[i].validationRule.instruction;
+                }
 
                 if(rules[i].validationRule.importance === 'HIGH') {
                     table += "<div class='panel panel-default high'>";
                     table += "<div class='panel-body'>";
-                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + rules[i].validationRule.description + "</b>";
-                    table += "<p>This is a place holder description that will tell the user what action to take.</p>"
-                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>"
-                    //table += "<td>" + rules[i].created + "</td>";
-                    //table += "<td>" + rules[i].validationRule.importance + "</td>";
-                    //table += "<td>" + rules[i].rightsideValue + "</td>";
+                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
+                    table += "<p>" + instruction + "</p>";
+                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
                     table += "</div>";
                     table += "</div>";
                 } else if(rules[i].validationRule.importance === 'MEDIUM') {
                     table += "<div class='panel panel-default medium'>";
                     table += "<div class='panel-body'>";
-                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + rules[i].validationRule.description + "</b>";
-                    table += "<p>This is a place holder description that will tell the user what action to take.</p>"
-                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>"
-                    //table += "<td>" + rules[i].created + "</td>";
-                    //table += "<td>" + rules[i].validationRule.importance + "</td>";
-                    //table += "<td>" + rules[i].rightsideValue + "</td>";
+                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
+                    table += "<p>" + instruction + "</p>";
+                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
                     table += "</div>";
                     table += "</div>";
                 } else if(rules[i].validationRule.importance === 'LOW') {
                     table += "<div class='panel panel-default low'>";
                     table += "<div class='panel-body'>";
-                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + rules[i].validationRule.description + "</b>";
-                    table += "<p>This is a place holder description that will tell the user what action to take.</p>"
-                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>"
-                    //table += "<td>" + rules[i].created + "</td>";
-                    //table += "<td>" + rules[i].validationRule.importance + "</td>";
-                    //table += "<td>" + rules[i].rightsideValue + "</td>";
+                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
+                    table += "<p>" + instruction + "</p>";
+                    table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1)'></span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0)'></span>";
                     table += "</div>";
                     table += "</div>";
                 }
