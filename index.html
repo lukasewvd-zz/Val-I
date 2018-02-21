@@ -136,28 +136,34 @@
             $.get(
                 "../../../api/dataStore/actionFeedback/" + id,
                 function(data) {
-                   var score = data.score;
-                   if(!score) {
-                       score = 0;
-                   }
+                    var positive = data.positive;
+                    var negative = data.negative;
+                   
+                    if(!positive) {
+                        positive = 0;
+                    }
+
+                    if(!negative) {
+                        negative = 0;
+                    }
 
                     if(type === 1) {
-                        score++;
+                        positive++;
                         $.ajax({
                             url: "../../../api/dataStore/actionFeedback/" + id,
                             type: "PUT",
-                            data: "{\"score\":" + score + "}",
+                            data: "{\"positive\":" + positive + ", \"negative\":" + negative + "}",
                             contentType:"application/json; charset=utf-8",
                             dataType:"json",
                             success: function(){
                             }
                         });
                     } else if(type === 0) {
-                        score--;
+                        negative++;
                         $.ajax({
                             url: "../../../api/dataStore/actionFeedback/" + id,
                             type: "PUT",
-                            data: "{\"score\":" + score + "}",
+                            data: "{\"positive\":" + positive + ", \"negative\":" + negative + "}",
                             contentType:"application/json; charset=utf-8",
                             dataType:"json",
                             success: function(){
@@ -166,24 +172,26 @@
                     }
                 })
                 .fail(function() {
-                    var score = 0;
+                    var positive = 0;
+                    var negative = 0;
+
                     if(type === 1) {
-                        score++;
+                        positive++;
                         $.ajax({
                             url: "../../../api/dataStore/actionFeedback/" + id,
                             type: "POST",
-                            data: "{\"score\":" + score + "}",
+                            data: "{\"positive\":" + positive + ", \"negative\":" + negative + "}",
                             contentType:"application/json; charset=utf-8",
                             dataType:"json",
                             success: function(){
                             }
                         });
                     } else if(type === 0) {
-                        score--;
+                        negative++;
                         $.ajax({
                             url: "../../../api/dataStore/actionFeedback/" + id,
                             type: "POST",
-                            data: "{\"score\":" + score + "}",
+                            data: "{\"positive\":" + positive + ", \"negative\":" + negative + "}",
                             contentType:"application/json; charset=utf-8",
                             dataType:"json",
                             success: function(){
