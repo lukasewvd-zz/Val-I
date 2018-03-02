@@ -105,7 +105,7 @@
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'MEDIUM') {
@@ -113,7 +113,7 @@
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'LOW') {
@@ -121,7 +121,7 @@
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
                         table += "</div>";
                     }
@@ -215,6 +215,12 @@
         .low {
             background-color: rgb(246, 246, 246);
             margin-bottom: 5px;
+        }
+        .up:active {
+            color: rgb(75, 181, 67);
+        }
+        .down:active {
+            color: rgb(255, 0, 51);
         }
     </style>
 </html>
