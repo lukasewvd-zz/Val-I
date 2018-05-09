@@ -16,6 +16,7 @@ function setSelectedGroup(id) {
     generateTable(results);
 }
 
+//Gets all validation groups and user info.
 function getGroupsAndUserInfo() {
     var groups = [];
     $.get(
@@ -37,6 +38,7 @@ function getGroupsAndUserInfo() {
     );
 }
 
+//Gets the validation results and kick starts table generation.
 function runValidation() {
     $.get(
         "../../../api/validationResults?fields=id,validationRule[id,displayName,name,description,instruction,importance,validationRuleGroups[id]]&paging=false",
@@ -48,6 +50,7 @@ function runValidation() {
     );
 }
 
+//Generates the HTML code for the table.
 function generateTable(rules) {
     var parent = document.getElementById('analysisResult');
     
@@ -193,6 +196,7 @@ function generateTable(rules) {
     });
 }
 
+//Send feedback to data store.
 function feedback(type, id) {
     $.get(
         "../../../api/dataStore/actionFeedback/" + id,
@@ -266,6 +270,7 @@ function feedback(type, id) {
         });
 }
 
+//Set in data store that this user has interacted with this validation result.
 function setInteracted(id) {
     $.get("../../../api/dataStore/userInteractionActionFeedback/" + user.id, function(data) {
         var interactedActions = data.interactedActions;
@@ -285,6 +290,8 @@ function setInteracted(id) {
             contentType:"application/json; charset=utf-8",
             dataType:"json",
             success: function(){
+                //Regenereating tables with latest changes.
+                generateTable(results);
             }
         });
     }).fail(function() {
@@ -301,6 +308,8 @@ function setInteracted(id) {
             contentType:"application/json; charset=utf-8",
             dataType:"json",
             success: function(){
+                //Regenereating tables with latest changes.
+                generateTable(results);
             }
         });
     });
