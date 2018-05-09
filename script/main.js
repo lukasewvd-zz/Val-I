@@ -92,7 +92,6 @@ function generateTable(rules) {
                         table += "<div class='panel-body'>";
                         table += "<b style='padding-bottom: 2px'> " + name + "</b>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'MEDIUM') {
@@ -100,7 +99,6 @@ function generateTable(rules) {
                         table += "<div class='panel-body'>";
                         table += "<b style='padding-bottom: 2px'> " + name + "</b>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'LOW') {
@@ -108,7 +106,6 @@ function generateTable(rules) {
                         table += "<div class='panel-body'>";
                         table += "<b style='padding-bottom: 2px'> " + name + "</b>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
                         table += "</div>";
                     }
