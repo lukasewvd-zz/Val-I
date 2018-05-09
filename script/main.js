@@ -87,7 +87,7 @@ function generateTable(rules) {
                     if(rules[i].validationRule.importance === 'HIGH') {
                         table += "<div class='panel panel-default high'>";
                         table += "<div class='panel-body'>";
-                        table += "<b style='padding-bottom: 2px'> " + name + " | " + id + "</b>";
+                        table += "<b style='padding-bottom: 2px'> " + name + "</b>";
                         table += "<p>" + instruction + "</p>";
                         table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
@@ -113,7 +113,7 @@ function generateTable(rules) {
                     if(rules[i].validationRule.importance === 'HIGH') {
                         table += "<div class='panel panel-default high'>";
                         table += "<div class='panel-body'>";
-                        table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + " | " + id + "</b>";
+                        table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
                         table += "<p>" + instruction + "</p>";
                         table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
@@ -163,7 +163,7 @@ function generateTable(rules) {
                 if(rules[i].validationRule.importance === 'HIGH') {
                     table += "<div class='panel panel-default high'>";
                     table += "<div class='panel-body'>";
-                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + " | " + id + "</b>";
+                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + " </b>";
                     table += "<p>" + instruction + "</p>";
                     table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                     table += "</div>";
