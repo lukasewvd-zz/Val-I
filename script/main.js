@@ -28,7 +28,6 @@ function getGroupsAndUserInfo() {
             selectedGroup = groups[0].id;
             $.get("../../../api/me/", function(userInfo) {
                 user = userInfo;
-                console.log(user);
                 runValidation();
             }).fail(function() {
                 console.log("ERROR: Failed to fetch user info.");
@@ -288,6 +287,7 @@ function setInteracted(id) {
             dataType:"json",
             success: function(){
                 //Regenereating tables with latest changes.
+                updateNotificationTab();
                 generateTable(results);
             }
         });
@@ -306,8 +306,25 @@ function setInteracted(id) {
             dataType:"json",
             success: function(){
                 //Regenereating tables with latest changes.
+                updateNotificationTab();
                 generateTable(results);
             }
         });
     });
+}
+
+function updateNotificationTab() {
+    //Fetch all, iframes. This will include the Dashboard Tabs App.
+    iframes = parent.document.getElementsByTagName('iframe');
+
+    for(i = 0; i < iframes.length; i++) {
+        //Find correct iframe. Dashboard Tabs App gives it self the 'tabsApp' id.
+        if(iframes[i].id === 'tabsApp') {
+            var amt = iframes[i].contentDocument.getElementById(selectedGroup).innerHTML;
+            amt = parseInt(amt);
+            amt--;
+            iframes[i].contentDocument.getElementById(selectedGroup).innerHTML = amt;
+        }
+    }
+
 }
