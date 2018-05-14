@@ -7,6 +7,9 @@ var user = {};
 //Array of all validation rules that have been interacted with.
 var userInteractedActions
 
+var allDownIdOrgUnits = [];
+var userOrgUnitsName = [];
+
 getGroupsAndUserInfo();
 
 //TODO: Get selected group based on which dashboard we are viewing.
@@ -28,7 +31,7 @@ function getGroupsAndUserInfo() {
             selectedGroup = groups[0].id;
             $.get("../../../api/me/", function(userInfo) {
                 user = userInfo;
-                runValidation();
+                getOrgUnits();
             }).fail(function() {
                 console.log("ERROR: Failed to fetch user info.");
             });
@@ -37,13 +40,59 @@ function getGroupsAndUserInfo() {
     );
 }
 
+//Gets users orgunits.
+function getOrgUnits() {
+    var allOrgUnits = [];
+    var userOrgunits = [];
+
+    $.get("../../../api/organisationUnits.json?fields=id,name,children[id,name]&paging=false", function(response) {
+        allOrgUnits = response.organisationUnits;
+
+        for(var i = 0; i < user.organisationUnits.length; i++) {
+            userOrgunits.push(user.organisationUnits[i].id);
+        }
+
+        for(var i = 0; i < allOrgUnits.length; i++) {
+            if(userOrgunits.indexOf(allOrgUnits[i].id) > -1){
+                getAllRelated(allOrgUnits[i]);                               
+            }  
+        }
+
+        //Recursive methode for finding all related orgUnits.
+        function getAllRelated(ou) {
+            for(var i = 0; i < allOrgUnits.length; i++) {
+                if(allOrgUnits[i].id === ou.id){
+                    if(allDownIdOrgUnits.indexOf(allOrgUnits[i].id) < 0) {
+                        allDownIdOrgUnits.push(allOrgUnits[i].id);
+                        userOrgUnitsName[allOrgUnits[i].id] = allOrgUnits[i].name;
+                    }                      
+                    if(!allOrgUnits[i].children) {
+                        return;
+                    } else {
+                        for(var j = 0; j < allOrgUnits[i].children.length; j++) {
+                            getAllRelated(allOrgUnits[i].children[j]);
+                        }   
+                    }                         
+                }
+            }
+        }
+
+        console.log(allDownIdOrgUnits);
+
+        runValidation();
+    });
+}
+
 //Gets the validation results and kick starts table generation.
 function runValidation() {
     $.get(
-        "../../../api/validationResults?fields=id,validationRule[id,displayName,name,description,instruction,importance,validationRuleGroups[id]]&paging=false",
+        "../../../api/validationResults?fields=id,organisationUnit,validationRule[id,displayName,name,description,instruction,importance,validationRuleGroups[id]]&paging=false",
         function(data) {
-            results = data.validationResults;
-            
+            for(var i = 0; i < data.validationResults.length; i++) { 
+                if(allDownIdOrgUnits.indexOf(data.validationResults[i].organisationUnit.id) > -1) {
+                    results.push(data.validationResults[i]);
+                }
+            }
             generateTable(results);
         }
     );
@@ -62,6 +111,7 @@ function generateTable(rules) {
     var table = "";
 
     var name = "";
+    var orgUnit = "";
     var instruction = "";
     var id = "";
     var validationRuleGroupIds = [];
@@ -77,6 +127,8 @@ function generateTable(rules) {
                 } else {
                     name = rules[i].validationRule.displayName;
                 }
+
+                orgUnit = rules[i].organisationUnit.id;
     
                 if(!rules[i].validationRule.instruction) {
                     instruction = rules[i].validationRule.description;
@@ -89,21 +141,21 @@ function generateTable(rules) {
                     if(rules[i].validationRule.importance === 'HIGH') {
                         table += "<div class='panel panel-default high'>";
                         table += "<div class='panel-body'>";
-                        table += "<b style='padding-bottom: 2px'> " + name + "</b>";
+                        table += "<b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p>" + instruction + "</p>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'MEDIUM') {
                         table += "<div class='panel panel-default medium'>";
                         table += "<div class='panel-body'>";
-                        table += "<b style='padding-bottom: 2px'> " + name + "</b>";
+                        table += "<b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p>" + instruction + "</p>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'LOW') {
                         table += "<div class='panel panel-default low'>";
                         table += "<div class='panel-body'>";
-                        table += "<b style='padding-bottom: 2px'> " + name + "</b>";
+                        table += "<b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p>" + instruction + "</p>";
                         table += "</div>";
                         table += "</div>";
@@ -112,7 +164,7 @@ function generateTable(rules) {
                     if(rules[i].validationRule.importance === 'HIGH') {
                         table += "<div class='panel panel-default high'>";
                         table += "<div class='panel-body'>";
-                        table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
+                        table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p>" + instruction + "</p>";
                         table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
@@ -120,7 +172,7 @@ function generateTable(rules) {
                     } else if(rules[i].validationRule.importance === 'MEDIUM') {
                         table += "<div class='panel panel-default medium'>";
                         table += "<div class='panel-body'>";
-                        table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
+                        table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p>" + instruction + "</p>";
                         table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
@@ -128,7 +180,7 @@ function generateTable(rules) {
                     } else if(rules[i].validationRule.importance === 'LOW') {
                         table += "<div class='panel panel-default low'>";
                         table += "<div class='panel-body'>";
-                        table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
+                        table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p>" + instruction + "</p>";
                         table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                         table += "</div>";
@@ -162,7 +214,7 @@ function generateTable(rules) {
                 if(rules[i].validationRule.importance === 'HIGH') {
                     table += "<div class='panel panel-default high'>";
                     table += "<div class='panel-body'>";
-                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + " </b>";
+                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                     table += "<p>" + instruction + "</p>";
                     table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                     table += "</div>";
@@ -170,7 +222,7 @@ function generateTable(rules) {
                 } else if(rules[i].validationRule.importance === 'MEDIUM') {
                     table += "<div class='panel panel-default medium'>";
                     table += "<div class='panel-body'>";
-                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
+                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                     table += "<p>" + instruction + "</p>";
                     table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                     table += "</div>";
@@ -178,7 +230,7 @@ function generateTable(rules) {
                 } else if(rules[i].validationRule.importance === 'LOW') {
                     table += "<div class='panel panel-default low'>";
                     table += "<div class='panel-body'>";
-                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b>";
+                    table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                     table += "<p>" + instruction + "</p>";
                     table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
                     table += "</div>";
