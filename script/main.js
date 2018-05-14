@@ -76,9 +76,6 @@ function getOrgUnits() {
                 }
             }
         }
-
-        console.log(allDownIdOrgUnits);
-
         runValidation();
     });
 }
