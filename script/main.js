@@ -207,7 +207,8 @@ function generateTable(rules) {
                 }
     
                 id = rules[i].id;
-    
+                orgUnit = rules[i].organisationUnit.id;
+                
                 if(rules[i].validationRule.importance === 'HIGH') {
                     table += "<div class='panel panel-default high'>";
                     table += "<div class='panel-body'>";
