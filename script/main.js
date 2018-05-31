@@ -163,7 +163,8 @@ function generateTable(rules) {
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='negativeFeedbackShow(\"" + id + "\")'></span>";
+                        table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='negativeFeedbackSubmit(\"" + id + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='negativeFeedbackShow(\"" + id + "\")'>Cancel</button></div></div>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'MEDIUM') {
@@ -171,7 +172,8 @@ function generateTable(rules) {
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='negativeFeedbackShow(\"" + id + "\")'></span>";
+                        table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='negativeFeedbackSubmit(\"" + id + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='negativeFeedbackShow(\"" + id + "\")'>Cancel</button></div></div>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'LOW') {
@@ -179,7 +181,8 @@ function generateTable(rules) {
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p>" + instruction + "</p>";
-                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
+                        table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='negativeFeedbackShow(\"" + id + "\")'></span>";
+                        table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='negativeFeedbackSubmit(\"" + id + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='negativeFeedbackShow(\"" + id + "\")'>Cancel</button></div></div>";
                         table += "</div>";
                         table += "</div>";
                     }
@@ -214,7 +217,8 @@ function generateTable(rules) {
                     table += "<div class='panel-body'>";
                     table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                     table += "<p>" + instruction + "</p>";
-                    table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
+                    table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='negativeFeedbackShow(\"" + id + "\")'></span>";
+                    table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='negativeFeedbackSubmit(\"" + id + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='negativeFeedbackShow(\"" + id + "\")'>Cancel</button></div></div>";
                     table += "</div>";
                     table += "</div>";
                 } else if(rules[i].validationRule.importance === 'MEDIUM') {
@@ -222,7 +226,8 @@ function generateTable(rules) {
                     table += "<div class='panel-body'>";
                     table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                     table += "<p>" + instruction + "</p>";
-                    table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
+                    table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='negativeFeedbackShow(\"" + id + "\")'></span>";
+                    table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='negativeFeedbackSubmit(\"" + id + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='negativeFeedbackShow(\"" + id + "\")'>Cancel</button></div></div>";
                     table += "</div>";
                     table += "</div>";
                 } else if(rules[i].validationRule.importance === 'LOW') {
@@ -230,7 +235,8 @@ function generateTable(rules) {
                     table += "<div class='panel-body'>";
                     table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                     table += "<p>" + instruction + "</p>";
-                    table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedback(0,\"" + id + "\")'></span>";
+                    table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedback(1,\"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='negativeFeedbackShow(\"" + id + "\")'></span>";
+                    table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='negativeFeedbackSubmit(\"" + id + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='negativeFeedbackShow(\"" + id + "\")'>Cancel</button></div></div>";
                     table += "</div>";
                     table += "</div>";
                 }
@@ -243,12 +249,13 @@ function generateTable(rules) {
 }
 
 //Send feedback to data store.
-function feedback(type, id) {
+function feedback(type, id, message) {
     $.get(
         "../../../api/dataStore/actionFeedback/" + id,
         function(data) {
             var positive = data.positive;
             var negative = data.negative;
+            var feedbackMessages = data.feedbackMessages;
             
             if(!positive) {
                 positive = 0;
@@ -272,10 +279,20 @@ function feedback(type, id) {
                 });
             } else if(type === 0) {
                 negative++;
+
+                if(!feedbackMessages || feedbackMessages.length === 0) {
+                    feedbackMessages = [];
+                    feedbackMessages.push(message);
+                } else {
+                    feedbackMessages.push(message);
+                }
+
+                feedbackMessages = JSON.stringify(feedbackMessages);
+
                 $.ajax({
                     url: "../../../api/dataStore/actionFeedback/" + id,
                     type: "PUT",
-                    data: "{\"positive\":" + positive + ", \"negative\":" + negative + "}",
+                    data: "{\"positive\":" + positive + ", \"negative\":" + negative + ", \"feedbackMessages\":" + feedbackMessages + "}",
                     contentType:"application/json; charset=utf-8",
                     dataType:"json",
                     success: function(){
@@ -287,6 +304,7 @@ function feedback(type, id) {
         .fail(function() {
             var positive = 0;
             var negative = 0;
+            var feedbackMessages = [];
 
             if(type === 1) {
                 positive++;
@@ -302,10 +320,12 @@ function feedback(type, id) {
                 });
             } else if(type === 0) {
                 negative++;
+                feedbackMessages.push(message);
+                feedbackMessages = JSON.stringify(feedbackMessages);
                 $.ajax({
                     url: "../../../api/dataStore/actionFeedback/" + id,
                     type: "POST",
-                    data: "{\"positive\":" + positive + ", \"negative\":" + negative + "}",
+                    data: "{\"positive\":" + positive + ", \"negative\":" + negative + ", \"feedbackMessages\":" + feedbackMessages + "}",
                     contentType:"application/json; charset=utf-8",
                     dataType:"json",
                     success: function(){
@@ -314,6 +334,26 @@ function feedback(type, id) {
                 });
             }
         });
+}
+
+function negativeFeedbackShow(id) {
+    var element = document.getElementById(id);
+    if (element.style.display === "none") {
+        element.style.display = "block";
+    } else {
+        element.style.display = "none";
+    }
+}
+
+function negativeFeedbackSubmit(id) {
+    var element = document.getElementsByName(id)[0];
+    var message = element.value;
+    if(!message) {
+        alert("Feedback message required!");
+    } else {
+        feedback(0, id, message);
+    }
+
 }
 
 //Set in data store that this user has interacted with this validation result.
