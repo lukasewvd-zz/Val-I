@@ -1,6 +1,6 @@
 {
-  "name": "Val-I: Validation Rules Widget",
-  "description": "Widget for aggregate validation rules.",
+  "name": "Feedback Messages",
+  "description": "Widget for showning feedback messages based on validation rules.",
   "version": "0.0.1",
   "appType": "DASHBOARD_WIDGET",
   "launch_path": "index.html",
