@@ -29,10 +29,15 @@ function setSelectedGroup() {
 //Gets all validation groups and user info.
 function getGroupsAndUserInfo() {
     var groups = [];
+    var selectedGroupName = "";
     $.get(
         "../../../api/validationRuleGroups?paging=false", function(data) {
             groups = data.validationRuleGroups;
             selectedGroup = setSelectedGroup();
+            selectedGroupName = groups.find(group => group.id === selectedGroup).displayName;
+            //Set name of group in title.
+            document.getElementById("title").innerHTML += selectedGroupName;
+
             $.get("../../../api/me/", function(userInfo) {
                 user = userInfo;
                 getOrgUnits();
