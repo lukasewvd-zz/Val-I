@@ -32,9 +32,6 @@ function getGroupsAndUserInfo() {
     $.get(
         "../../../api/validationRuleGroups?paging=false", function(data) {
             groups = data.validationRuleGroups;
-            let optionList = document.getElementById('groups').options;
-            groups.forEach(group =>
-            optionList.add(new Option(group.displayName, group.id)));
             selectedGroup = setSelectedGroup();
             $.get("../../../api/me/", function(userInfo) {
                 user = userInfo;
