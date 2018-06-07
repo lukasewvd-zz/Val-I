@@ -421,6 +421,8 @@ function updateNotificationTab() {
     for(i = 0; i < iframes.length; i++) {
         //Find correct iframe. Dashboard Tabs App gives it self the 'tabsApp' id.
         if(iframes[i].id === 'tabsApp') {
+            //All tabs have a unique id that is set to the different validation groups they represent.
+            //We can get the correct tab and its amount of notifications with the id of the selected group.
             var amt = iframes[i].contentDocument.getElementById(selectedGroup).innerHTML;
             amt = parseInt(amt);
             amt--;
