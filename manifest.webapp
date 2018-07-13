@@ -1,5 +1,5 @@
 {
-  "name": "Feedback Messages",
+  "name": "Recommended Actions",
   "description": "Widget for showning feedback messages based on validation rules.",
   "version": "0.0.1",
   "appType": "DASHBOARD_WIDGET",

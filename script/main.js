@@ -5,24 +5,30 @@ var results = [];
 //User info.
 var user = {};
 //Array of all validation rules that have been interacted with.
-var userInteractedActions
+var userInteractedActions = [];
 
 var allDownIdOrgUnits = [];
 var userOrgUnitsName = [];
 
 //Ids of dashboards matched with the ids of groups they belong to.
-var groupBelongsToDashboard = {'index.html?dashboardItemId=VxShQhoMUs3': 'UP1lctvalPn', 'test.html': 'xWtt9c443Lt', 'test.html': 'zlaSof6qLqF'};
+var groupBelongsToDashboard = {'ZC1KKn6KNG3': 'UUF1YTjZ0nu',
+                               'dNZ7Ieg2cmF': 'JgRPDsrjMk8',
+                               'cUJMaSC8Wi1': 'a8M4hj7Op7v',
+                               'DfkC7KiVGO4': 'XcoDQoYpGLk',
+                               'LfhAZvAoCIN': 'wAVw1QtktVh'
+                              };
 
 getGroupsAndUserInfo();
 
 function setSelectedGroup() {
+    //TODO: SET ID OF DESIRED VALIDATION GROUP. TEMP SOLUTION UNTIL WE GET ROUTING.
     var id = null;
     
     //Gets the id of current dashboard from URL.
-    var splitURL = document.URL.split('/');
+    /*var splitURL = document.URL.split('/');
     var dashboardId = splitURL[splitURL.length -1];
 
-    var id = groupBelongsToDashboard[dashboardId];
+    var id = groupBelongsToDashboard[dashboardId];*/
     return id;
 }
 
