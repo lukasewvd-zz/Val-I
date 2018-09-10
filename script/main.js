@@ -4,6 +4,7 @@ var selectedGroup = "";
 var results = [];
 //User info.
 var user = {};
+var userSettings = {};
 //Array of all validation rules that have been interacted with.
 var userInteractedActions = [];
 
@@ -24,7 +25,7 @@ getGroupsAndUserInfo();
 
 function setSelectedGroup() {
     //TODO: SET ID OF DESIRED VALIDATION GROUP. TEMP SOLUTION UNTIL WE GET ROUTING.
-    var id = "";
+    var id = "a8M4hj7Op7v";
     
     //Gets the id of current dashboard from URL.
     /*var splitURL = document.URL.split('/');
@@ -46,15 +47,31 @@ function getGroupsAndUserInfo() {
             //Set name of group in title.
             document.getElementById("title").innerHTML += selectedGroupName;
 
+            //Get locale
+            $.get("../../../api/userSettings/", function(settings) {
+                userSettings = settings;
+            }).fail(function() {
+                console.log("ERROR: Failed to fetch user settings.");
+            });
+
             $.get("../../../api/me/", function(userInfo) {
                 user = userInfo;
                 getOrgUnits();
             }).fail(function() {
                 console.log("ERROR: Failed to fetch user info.");
             });
-            
+
         }
     );
+}
+
+function setDirection() {
+    if(userSettings && userSettings.keyUiLocale === 'ar') {
+        var elements = document.getElementsByClassName("direction");
+        for(var i = 0; i < elements.length; i++) {
+            elements[i].style.direction = "rtl";
+        }
+    }
 }
 
 //Gets users orgunits.
@@ -156,21 +173,21 @@ function generateTable(rules) {
                         table += "<div class='panel panel-default high'>";
                         table += "<div class='panel-body'>";
                         table += "<b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
-                        table += "<p>" + instruction + "</p>";
+                        table += "<p class='direction'>" + instruction + "</p>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'MEDIUM') {
                         table += "<div class='panel panel-default medium'>";
                         table += "<div class='panel-body'>";
                         table += "<b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
-                        table += "<p>" + instruction + "</p>";
+                        table += "<p class='direction'>" + instruction + "</p>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'LOW') {
                         table += "<div class='panel panel-default low'>";
                         table += "<div class='panel-body'>";
                         table += "<b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
-                        table += "<p>" + instruction + "</p>";
+                        table += "<p class='direction'>" + instruction + "</p>";
                         table += "</div>";
                         table += "</div>";
                     }
@@ -179,7 +196,7 @@ function generateTable(rules) {
                         table += "<div class='panel panel-default high'>";
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(218, 136, 136)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
-                        table += "<p>" + instruction + "</p>";
+                        table += "<p class='direction'>" + instruction + "</p>";
                         table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedbackShow(1, \"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedbackShow(0, \"" + id + "\")'></span>";
                         table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input placeholder='Reason (Optional)' class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='feedbackSubmit(\"" + id + "\",\"" + name + "\",\"" + instruction.replace(/"/g, '') + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='feedbackShow(-1,\"" + id + "\")'>Cancel</button></div></div>";
                         table += "</div>";
@@ -188,7 +205,7 @@ function generateTable(rules) {
                         table += "<div class='panel panel-default medium'>";
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true'style='color: rgb(253, 229, 77)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
-                        table += "<p>" + instruction + "</p>";
+                        table += "<p class='direction'>" + instruction + "</p>";
                         table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedbackShow(1, \"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedbackShow(0, \"" + id + "\")'></span>";
                         table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input placeholder='Reason (Optional)' class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='feedbackSubmit(\"" + id + "\",\"" + name + "\",\"" + instruction.replace(/"/g, '') + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='feedbackShow(-1,\"" + id + "\")'>Cancel</button></div></div>";
                         table += "</div>";
@@ -197,7 +214,7 @@ function generateTable(rules) {
                         table += "<div class='panel panel-default low'>";
                         table += "<div class='panel-body'>";
                         table += "<span class='glyphicon glyphicon-record' aria-hidden='true' style='color: rgb(221, 221, 221)'> </span><b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
-                        table += "<p>" + instruction + "</p>";
+                        table += "<p class='direction'>" + instruction + "</p>";
                         table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedbackShow(1, \"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedbackShow(0, \"" + id + "\")'></span>";
                         table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input placeholder='Reason (Optional)' class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='feedbackSubmit(\"" + id + "\",\"" + name + "\",\"" + instruction.replace(/"/g, '') + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='feedbackShow(-1,\"" + id + "\")'>Cancel</button></div></div>";
                         table += "</div>";
@@ -209,6 +226,7 @@ function generateTable(rules) {
     
         ruleTable.innerHTML = table;
         parent.appendChild(ruleTable);
+        setDirection();
     }).fail(function() {
         for(var i = 0; i < rules.length; i++) {
             validationRuleGroupIds = rules[i].validationRule.validationRuleGroups.map(function(obj){return obj.id;});
@@ -262,6 +280,7 @@ function generateTable(rules) {
     
         ruleTable.innerHTML = table;
         parent.appendChild(ruleTable);
+        setDirection();
     });
 }
 
@@ -284,29 +303,29 @@ function feedback(type, id, name, instruction, message) {
                 negative = 0;
             }
 
-            if(!positiveFeedbackMessages && message || positiveFeedbackMessages.length === 0 && message) {
+            if(!positiveFeedbackMessages && message || positiveFeedbackMessages && positiveFeedbackMessages.length === 0 && message) {
                 positiveFeedbackMessages = [];
                 if(type === 1) {
                     positiveFeedbackMessages.push(message);
                 }
-            } else if(positiveFeedbackMessages && message || positiveFeedbackMessages.length > 0 && message){
+            } else if(positiveFeedbackMessages && message || positiveFeedbackMessages && positiveFeedbackMessages.length > 0 && message){
                 if(type === 1) {
                     positiveFeedbackMessages.push(message);
                 }
-            } else if(!positiveFeedbackMessages && !message || positiveFeedbackMessages.length === 0 && !message){
+            } else if(!positiveFeedbackMessages && !message || positiveFeedbackMessages && positiveFeedbackMessages.length === 0 && !message){
                 positiveFeedbackMessages = [];
             }
 
-            if(!negativeFeedbackMessages && message || negativeFeedbackMessages.length === 0 && message) {
+            if(!negativeFeedbackMessages && message || negativeFeedbackMessages && negativeFeedbackMessages.length === 0 && message) {
                 negativeFeedbackMessages = [];
                 if(type === 0) {
                     negativeFeedbackMessages.push(message);
                 }
-            } else if(negativeFeedbackMessages && message || negativeFeedbackMessages.length > 0 && message){
+            } else if(negativeFeedbackMessages && message || negativeFeedbackMessages && negativeFeedbackMessages.length > 0 && message){
                 if(type === 0) {
                     negativeFeedbackMessages.push(message);
                 }
-            } else if(!negativeFeedbackMessages && !message || negativeFeedbackMessages.length === 0 && !message){
+            } else if(!negativeFeedbackMessages && !message || negativeFeedbackMessages && negativeFeedbackMessages.length === 0 && !message){
                 negativeFeedbackMessages = [];
             }
 
