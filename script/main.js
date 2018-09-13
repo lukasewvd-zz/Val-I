@@ -117,7 +117,7 @@ function getOrgUnits() {
 //Gets the validation results and kick starts table generation.
 function runValidation() {
     $.get(
-        "../../../api/validationResults?fields=id,organisationUnit,validationRule[id,displayName,name,description,instruction,importance,validationRuleGroups[id]]&paging=false",
+        "../../../api/validationResults?fields=id,organisationUnit,created,validationRule[id,displayName,name,description,instruction,importance,validationRuleGroups[id]]&paging=false",
         function(data) {
             for(var i = 0; i < data.validationResults.length; i++) { 
                 if(allDownIdOrgUnits.indexOf(data.validationResults[i].organisationUnit.id) > -1) {
@@ -145,6 +145,7 @@ function generateTable(rules) {
     var orgUnit = "";
     var instruction = "";
     var id = "";
+    var date = "";
     var validationRuleGroupIds = [];
 
     $.get("../../../api/dataStore/userInteractionActionFeedback/" + user.id, function(data) {
@@ -160,6 +161,9 @@ function generateTable(rules) {
                 }
 
                 orgUnit = rules[i].organisationUnit.id;
+                
+                date = rules[i].created.split('-');
+                date = date[1] + "-" + date[0];
     
                 if(!rules[i].validationRule.instruction) {
                     instruction = rules[i].validationRule.description;
@@ -174,6 +178,7 @@ function generateTable(rules) {
                         table += "<div class='panel-body'>";
                         table += "<b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p class='direction'>" + instruction + "</p>";
+                        table += "<span style='float: right;'>" + date + "</span>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'MEDIUM') {
@@ -181,6 +186,7 @@ function generateTable(rules) {
                         table += "<div class='panel-body'>";
                         table += "<b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p class='direction'>" + instruction + "</p>";
+                        table += "<span style='float: right;'>" + date + "</span>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'LOW') {
@@ -188,6 +194,7 @@ function generateTable(rules) {
                         table += "<div class='panel-body'>";
                         table += "<b style='padding-bottom: 2px'> " + name + "</b><span style='float: right;font-size: 12px;'>" + userOrgUnitsName[orgUnit] + "</span>";
                         table += "<p class='direction'>" + instruction + "</p>";
+                        table += "<span style='float: right;'>" + date + "</span>";
                         table += "</div>";
                         table += "</div>";
                     }
@@ -199,6 +206,7 @@ function generateTable(rules) {
                         table += "<p class='direction'>" + instruction + "</p>";
                         table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedbackShow(1, \"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedbackShow(0, \"" + id + "\")'></span>";
                         table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input placeholder='Reason (Optional)' class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='feedbackSubmit(\"" + id + "\",\"" + name + "\",\"" + instruction.replace(/"/g, '') + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='feedbackShow(-1,\"" + id + "\")'>Cancel</button></div></div>";
+                        table += "<span style='float: right;'>" + date + "</span>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'MEDIUM') {
@@ -208,6 +216,7 @@ function generateTable(rules) {
                         table += "<p class='direction'>" + instruction + "</p>";
                         table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedbackShow(1, \"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedbackShow(0, \"" + id + "\")'></span>";
                         table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input placeholder='Reason (Optional)' class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='feedbackSubmit(\"" + id + "\",\"" + name + "\",\"" + instruction.replace(/"/g, '') + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='feedbackShow(-1,\"" + id + "\")'>Cancel</button></div></div>";
+                        table += "<span style='float: right;'>" + date + "</span>";
                         table += "</div>";
                         table += "</div>";
                     } else if(rules[i].validationRule.importance === 'LOW') {
@@ -217,6 +226,7 @@ function generateTable(rules) {
                         table += "<p class='direction'>" + instruction + "</p>";
                         table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedbackShow(1, \"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedbackShow(0, \"" + id + "\")'></span>";
                         table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input placeholder='Reason (Optional)' class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='feedbackSubmit(\"" + id + "\",\"" + name + "\",\"" + instruction.replace(/"/g, '') + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='feedbackShow(-1,\"" + id + "\")'>Cancel</button></div></div>";
+                        table += "<span style='float: right;'>" + date + "</span>";
                         table += "</div>";
                         table += "</div>";
                     }
@@ -246,6 +256,9 @@ function generateTable(rules) {
     
                 id = rules[i].id;
                 orgUnit = rules[i].organisationUnit.id;
+
+                date = rules[i].created.split('-');
+                date = date[1] + "-" + date[0];
                 
                 if(rules[i].validationRule.importance === 'HIGH') {
                     table += "<div class='panel panel-default high'>";
@@ -254,6 +267,7 @@ function generateTable(rules) {
                     table += "<p>" + instruction + "</p>";
                     table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedbackShow(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedbackShow(0,\"" + id + "\")'></span>";
                     table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input placeholder='Reason (Optional)' class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='feedbackSubmit(\"" + id + "\",\"" + name + "\",\"" + instruction.replace(/"/g, '') + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='feedbackShow(-1,\"" + id + "\")'>Cancel</button></div></div>";
+                    table += "<span style='float: right;'>" + date + "</span>";
                     table += "</div>";
                     table += "</div>";
                 } else if(rules[i].validationRule.importance === 'MEDIUM') {
@@ -263,6 +277,7 @@ function generateTable(rules) {
                     table += "<p>" + instruction + "</p>";
                     table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedbackShow(1,\"" + id + "\")'>   </span><span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedbackShow(0,\"" + id + "\")'></span>";
                     table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input placeholder='Reason (Optional)' class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='feedbackSubmit(\"" + id + "\",\"" + name + "\",\"" + instruction.replace(/"/g, '') + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='feedbackShow(-1,\"" + id + "\")'>Cancel</button></div></div>";
+                    table += "<span style='float: right;'>" + date + "</span>";
                     table += "</div>";
                     table += "</div>";
                 } else if(rules[i].validationRule.importance === 'LOW') {
@@ -272,6 +287,7 @@ function generateTable(rules) {
                     table += "<p>" + instruction + "</p>";
                     table += "<span class='glyphicon glyphicon-thumbs-up up' aria-hidden='true' style='padding-right: 5px' onclick='feedbackShow(1,\"" + id + "\")'></span>   <span class='glyphicon glyphicon-thumbs-down down' aria-hidden='true' onclick='feedbackShow(0,\"" + id + "\")'></span>";
                     table += "<div class='row' style='display: none;' id='" + id + "'><div class='col-xs-7'><input placeholder='Reason (Optional)' class='form-control' name='" + id + "' type='text'></div><div class='col-xs-5 text-right'><button type='button' class='btn btn-primary' onclick='feedbackSubmit(\"" + id + "\",\"" + name + "\",\"" + instruction.replace(/"/g, '') + "\")'>Submit</button><button type='button' class='btn btn-danger' onclick='feedbackShow(-1,\"" + id + "\")'>Cancel</button></div></div>";
+                    table += "<span style='float: right;'>" + date + "</span>";
                     table += "</div>";
                     table += "</div>";
                 }
