@@ -12,11 +12,11 @@ var allDownIdOrgUnits = [];
 var userOrgUnitsName = [];
 
 //Ids of dashboards matched with the ids of groups they belong to.
-var groupBelongsToDashboard = {'ZC1KKn6KNG3': 'UUF1YTjZ0nu',
-                               'dNZ7Ieg2cmF': 'JgRPDsrjMk8',
-                               'cUJMaSC8Wi1': 'a8M4hj7Op7v',
-                               'DfkC7KiVGO4': 'XcoDQoYpGLk',
-                               'LfhAZvAoCIN': 'wAVw1QtktVh'
+var groupBelongsToDashboard = {'ZC1KKn6KNG3': 'UUF1YTjZ0nu', //Anemia
+                               'dNZ7Ieg2cmF': 'JgRPDsrjMk8', //Attendance
+                               'cUJMaSC8Wi1': 'a8M4hj7Op7v', //Diabetes
+                               'DfkC7KiVGO4': 'XcoDQoYpGLk', //Fetal Growth
+                               'LfhAZvAoCIN': 'wAVw1QtktVh' //Hypertension
                               };
 
 var selectedFeedbackType = -1;
@@ -25,7 +25,7 @@ getGroupsAndUserInfo();
 
 function setSelectedGroup() {
     //TODO: SET ID OF DESIRED VALIDATION GROUP. TEMP SOLUTION UNTIL WE GET ROUTING.
-    var id = "a8M4hj7Op7v";
+    var id = "UUF1YTjZ0nu";
     
     //Gets the id of current dashboard from URL.
     /*var splitURL = document.URL.split('/');
@@ -471,7 +471,6 @@ function setInteracted(id) {
             dataType:"json",
             success: function(){
                 //Regenereating tables with latest changes.
-                updateNotificationTab();
                 generateTable(results);
             }
         });
@@ -490,27 +489,8 @@ function setInteracted(id) {
             dataType:"json",
             success: function(){
                 //Regenereating tables with latest changes.
-                updateNotificationTab();
                 generateTable(results);
             }
         });
     });
-}
-
-function updateNotificationTab() {
-    //Fetch all, iframes. This will include the Dashboard Tabs App.
-    iframes = parent.document.getElementsByTagName('iframe');
-
-    for(i = 0; i < iframes.length; i++) {
-        //Find correct iframe. Dashboard Tabs App gives it self the 'tabsApp' id.
-        if(iframes[i].id === 'tabsApp') {
-            //All tabs have a unique id that is set to the different validation groups they represent.
-            //We can get the correct tab and its amount of notifications with the id of the selected group.
-            var amt = iframes[i].contentDocument.getElementById(selectedGroup).innerHTML;
-            amt = parseInt(amt);
-            amt--;
-            iframes[i].contentDocument.getElementById(selectedGroup).innerHTML = amt;
-        }
-    }
-
 }
